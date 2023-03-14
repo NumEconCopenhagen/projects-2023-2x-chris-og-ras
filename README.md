@@ -1,9 +1,9 @@
 # \[Group name\]
 
 **Group members:**
-- A
-- B
-- C
+- Christopher Dyrling
+- Christoffer Johne
+- Rasmine Hækkerup
 
 This repository contains  
 1. Inaugural project. 
