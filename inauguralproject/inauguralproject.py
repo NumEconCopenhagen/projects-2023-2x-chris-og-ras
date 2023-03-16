@@ -1,6 +1,6 @@
 
 from types import SimpleNamespace
-'bbbbbbb'
+
 import numpy as np
 from scipy import optimize
 
@@ -23,8 +23,8 @@ class HouseholdSpecializationModelClass:
         par.omega = 0.5 
 
         # c. household production
-        par.alpha = []
-        par.sigma = 1.0
+        par.alpha = 1
+        par.sigma = 0.5
 
         # d. wages
         par.wM = 1.0
@@ -44,6 +44,19 @@ class HouseholdSpecializationModelClass:
         sol.beta0 = np.nan
         sol.beta1 = np.nan
 
+    def calc_hf_hm_ratio(self, alpha, sigma):
+        """Calculate the ratio of female home production to male home production (HF/HM)"""
+
+        # Set the values of alpha and sigma to the specified values
+        self.par.alpha = alpha
+        self.par.sigma = sigma
+
+        # Solve the model
+        opt = self.solve_discrete()
+
+        # Calculate the HF/HM ratio
+        return opt.HF / opt.HM
+
     def calc_utility(self,LM,HM,LF,HF):
         """ calculate utility """
 
@@ -54,7 +67,12 @@ class HouseholdSpecializationModelClass:
         C = par.wM*LM + par.wF*LF
 
         # b. home production
-        H = HM**(1-par.alpha)*HF**par.alpha
+        if par.sigma == 0:
+            H = optimize.minimize(HM,HF)
+        elif par.sigma == 1:
+            H = HM**(1-par.alpha)*HF**par.alpha
+        else:
+            H = ((1-par.alpha)*HM**((par.sigma-1)/par.sigma)+par.alpha*HF**((par.sigma-1)/par.sigma))**(par.sigma/(par.sigma-1))
 
         # c. total consumption utility
         Q = C**par.omega*H**(1-par.omega)
