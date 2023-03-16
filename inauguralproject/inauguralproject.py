@@ -44,19 +44,6 @@ class HouseholdSpecializationModelClass:
         sol.beta0 = np.nan
         sol.beta1 = np.nan
 
-    def calc_hf_hm_ratio(self, alpha, sigma):
-        """Calculate the ratio of female home production to male home production (HF/HM)"""
-
-        # Set the values of alpha and sigma to the specified values
-        self.par.alpha = alpha
-        self.par.sigma = sigma
-
-        # Solve the model
-        opt = self.solve_discrete()
-
-        # Calculate the HF/HM ratio
-        return opt.HF / opt.HM
-
     def calc_utility(self,LM,HM,LF,HF):
         """ calculate utility """
 
@@ -131,8 +118,19 @@ class HouseholdSpecializationModelClass:
 
     def solve_wF_vec(self,discrete=False):
         """ solve model for vector of female wages """
+        par = self.par
+        sol = self.sol
 
-        pass
+        for i, wF in enumerate(par.wF_vec):
+            par.wF = wF
+            if discrete:
+                opt = self.solve_discrete()
+            else:
+                opt = self.solve()
+            sol.LM_vec[i] = opt.LM
+            sol.HM_vec[i] = opt.HM
+            sol.LF_vec[i] = opt.LF
+            sol.HF_vec[i] = opt.HF
 
     def run_regression(self):
         """ run regression """
