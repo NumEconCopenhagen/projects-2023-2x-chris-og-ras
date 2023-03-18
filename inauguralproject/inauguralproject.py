@@ -122,15 +122,20 @@ class HouseholdSpecializationModelClass:
         sol = self.sol
 
         for i, wF in enumerate(par.wF_vec):
+        
             par.wF = wF
             if discrete:
                 opt = self.solve_discrete()
             else:
-                opt = self.solve()
+                opt = self.solve()  
+
             sol.LM_vec[i] = opt.LM
             sol.HM_vec[i] = opt.HM
             sol.LF_vec[i] = opt.LF
-            sol.HF_vec[i] = opt.HF
+            sol.HF_vec[i] = opt.HF   
+        
+        if not discrete:
+            self.run_regression()
 
     def run_regression(self):
         """ run regression """
