@@ -111,65 +111,84 @@ class HouseholdSpecializationModelClass:
 
         return opt
 
-    def solve(self,do_print=False):
-        """ solve model continously """
+    def solve(self, do_print=False):
+        """Solve model continuously.
+
+        Args:
+            do_print (bool): Whether to print the results (default is False).
+
+        Returns:
+            An object with the optimal choices of LM, HM, LF, and HF.
+
+        """
+        # Get model parameters and solution
         par = self.par
         sol = self.sol
-        opt = SimpleNamespace()
-        
-        # a. all possible choices
-        
-        
-        
-        
-        x = np.linspace(0,24,98)
-        LM,HM,LF,HF = np.meshgrid(x,x,x,x) # all combinations
-    
-        LM = LM.ravel() # vector
-        HM = HM.ravel()
-        LF = LF.ravel()
-        HF = HF.ravel()
 
-        # b. calculate utility
-        u = self.calc_utility(LM,HM,LF,HF)
-    
-        # c. set to minus infinity if constraint is broken
-        I = (LM+HM > 24) | (LF+HF > 24) # | is "or"
-        u[I] = -np.inf
-    
-        # d. find maximizing argument
-        j = np.argmax(u)
-        
-        opt.LM = LM[j]
-        opt.HM = HM[j]
-        opt.LF = LF[j]
-        opt.HF = HF[j]
+        # Define a function to minimize (negative of utility)
+        def neg_utility(choices):
+            LM, HM, LF, HF = choices
+            return -self.calc_utility(LM, HM, LF, HF)
 
-        # e. print
+        # Set initial guesses and bounds for the optimization problem
+        x0 = [12, 12, 12, 12]
+        bounds = [(0, 24), (0, 24), (0, 24), (0, 24)]
+
+        # Solve the optimization problem
+        opt_result = optimize.minimize(neg_utility, x0, bounds=bounds)
+        opt = SimpleNamespace(
+            LM=opt_result.x[0],
+            HM=opt_result.x[1],
+            LF=opt_result.x[2],
+            HF=opt_result.x[3],
+            )
+
+        # Save the optimal choices to the solution object
+        sol.LM = opt.LM
+        sol.HM = opt.HM
+        sol.LF = opt.LF
+        sol.HF = opt.HF
+
+        # Print the results if requested
         if do_print:
-            for k,v in opt.__dict__.items():
-                print(f'{k} = {v:6.4f}')
+            for k, v in opt.__dict__.items():
+                print(f"{k} = {v:6.4f}")
 
         return opt
 
-    def solve_wF_vec(self,discrete=False):
+    def solve_wF_vec(self, discrete=False):
         """ solve model for vector of female wages """
         par = self.par
         sol = self.sol
 
+        HF_HM_ratios = np.zeros(par.wF_vec.size)
+
         for i, wF in enumerate(par.wF_vec):
-        
+
+            # update female wage
             par.wF = wF
+
+            # solve the model
             if discrete:
                 opt = self.solve_discrete()
             else:
-                opt = self.solve()  
+                opt = self.solve()
 
+            # store the results
             sol.LM_vec[i] = opt.LM
             sol.HM_vec[i] = opt.HM
             sol.LF_vec[i] = opt.LF
-            sol.HF_vec[i] = opt.HF   
-        
+            sol.HF_vec[i] = opt.HF
+
+            # calculate HF/HM ratio
+            sol.HM = opt.HM
+            sol.HF = opt.HF
+            HF_HM_ratios[i] = sol.HF / sol.HM
+
+        # store HF/HM ratios in solution object
+        sol.HF_HM_ratios = HF_HM_ratios
+
+        # run regression if not discrete
         if not discrete:
             self.run_regression()
 
