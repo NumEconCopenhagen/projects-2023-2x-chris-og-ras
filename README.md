@@ -1,4 +1,4 @@
-# \[Group name\]
+# \[2x Chris & Ras\]
 
 **Group members:**
 - Christopher Dyrling
