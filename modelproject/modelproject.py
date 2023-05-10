@@ -12,13 +12,18 @@ class Romer:
 
         # Parameters
         par.alpha = 0.3
+        par.beta = 0.2
+        par.kappa = 1 - par.alpha - par.beta
         par.rho = 0.05
         par.phi = 0.5
+        par.g = 0.02
         par.lambda_ = 0.5
         par.s = 0.2
-        par.delta = 0.1
+        par.delta = 0.05
         par.n = 0.02
         par.s_R = 0.2
+        par.X = 1.0 # land as a fixed resource
+        par.L = 1  # land is fixed
 
     def steady_state_equations(x, par):
         A, K, L, LA = x
@@ -44,14 +49,17 @@ class Solow:
         # Parameters
         par.alpha = 0.3
         par.beta = 0.2
-        par.kappa = 1-par.alpha-par.beta
+        par.kappa = 1 - par.alpha - par.beta
         par.rho = 0.05
+        par.phi = 0.5
         par.g = 0.02
+        par.lambda_ = 0.5
         par.s = 0.2
-        par.delta = 0.1
+        par.delta = 0.05
         par.n = 0.02
+        par.s_R = 0.2
+        par.X = 1.0 # land as a fixed resource
         par.L = 1  # land is fixed
-        par.X = 1  # normalize land productivity to 1
     
     def steady_state_equations(x, par):
         K, A = x
@@ -76,17 +84,19 @@ class SemiEndogenousRomer:
         par = self.par = SimpleNamespace()
 
         # Parameters
-        par.alpha = 0.33
-        par.beta = 0.33
+        par.alpha = 0.3
+        par.beta = 0.2
         par.kappa = 1 - par.alpha - par.beta
-        par.rho = 0.03
+        par.rho = 0.05
         par.phi = 0.5
-        par.lambda_ = 0.7
+        par.g = 0.02
+        par.lambda_ = 0.5
         par.s = 0.2
         par.delta = 0.05
-        par.n = 0.01
+        par.n = 0.02
         par.s_R = 0.2
         par.X = 1.0 # land as a fixed resource
+        par.L = 1  # land is fixed
 
     def steady_state_equations(self, x):
         par = self.par
