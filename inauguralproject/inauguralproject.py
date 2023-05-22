@@ -23,8 +23,8 @@ class HouseholdSpecializationModelClass:
         par.omega = 0.5 
 
         # c. household production
-        par.alpha = 1
-        par.sigma = 0.5
+        par.alpha = 0.5
+        par.sigma = 1
 
         # d. wages
         par.wM = 1.0
@@ -131,11 +131,11 @@ class HouseholdSpecializationModelClass:
             return -self.calc_utility(LM, HM, LF, HF)
 
         # Set initial guesses and bounds for the optimization problem
-        x0 = [12, 12, 12, 12]
+        x0 = [2, 2, 2, 2]
         bounds = [(0, 24), (0, 24), (0, 24), (0, 24)]
 
         # Solve the optimization problem
-        opt_result = optimize.minimize(neg_utility, x0, bounds=bounds)
+        opt_result = optimize.minimize(neg_utility, x0, bounds=bounds, method='Nelder-Mead')
         opt = SimpleNamespace(
             LM=opt_result.x[0],
             HM=opt_result.x[1],
