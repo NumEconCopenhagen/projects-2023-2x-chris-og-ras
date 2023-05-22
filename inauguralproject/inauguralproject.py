@@ -203,7 +203,32 @@ class HouseholdSpecializationModelClass:
         A = np.vstack([np.ones(x.size),x]).T
         sol.beta0,sol.beta1 = np.linalg.lstsq(A,y,rcond=None)[0]
     
-    def estimate(self,alpha=None,sigma=None):
-        """ estimate alpha and sigma """
+    def estimate(self, do_print=False):
+        par = self.par
+        sol = self.sol
 
-        pass
+        # Initial guess and bounds for the optimization
+        x0 = [0.5, 0.1]
+        bounds = ((0, 1), (0, 1))
+
+        # Define the target function for optimization
+        def target(x):
+            par.alpha, par.sigma = x
+            self.solve_wF_vec()
+            self.run_regression()
+            residual = (sol.beta0 - par.beta0_target) ** 2 + (sol.beta1 - par.beta1_target) ** 2
+            return residual
+
+        # Perform the optimization
+        solution = optimize.minimize(target, x0, method='Nelder-Mead', bounds=bounds)
+        sol.alpha, sol.sigma = solution.x
+
+        if do_print:
+            # Print the optimization results
+            print("Optimization results:")
+            print("=====================")
+            print(f"Alpha: {sol.alpha:.2f}")
+            print(f"Sigma: {sol.sigma:.2f}")
+            print(f"Residual value: {solution.fun:.2f}")
+            print(f"Success: {solution.success}")
+            print(f"Message: {solution.message}")
