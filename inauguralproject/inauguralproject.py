@@ -271,7 +271,7 @@ class HouseholdSpecializationModelClass:
 
         # Initial guess and bounds for the optimization
         x0 = [0.5, 0.1]
-        bounds = ((0, 1), (0, 1))
+        bounds = ((0.5, 0.5), (0, 1))
 
         # Define the target function for optimization
         def target(x):
