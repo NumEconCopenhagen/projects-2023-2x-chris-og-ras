@@ -7,7 +7,7 @@ The **results** of the project can be seen from running [dataproject.ipynb](data
 We apply the **following datasets**:
 
 1. Import of beer data (*DST*) 
-1. Temperature data (*DMI*)
+2. Temperature data (*DMI*)
 
 **Dependencies:** Apart from a standard Anaconda Python 3 installation, the project requires the following installations:
 
