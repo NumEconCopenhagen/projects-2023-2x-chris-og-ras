@@ -10,6 +10,12 @@ We apply the **following datasets**:
 2. Temperature data (*DMI*)
 
 **Dependencies:** Apart from a standard Anaconda Python 3 installation, the project requires the following installations:
-
-``pip install matplotlib-venn``
-``pip install git+https://github.com/alemartinello/dstapi``
+- matplotlib-venn ``pip install matplotlib-venn``
+- dstapi ``pip install git+https://github.com/alemartinello/dstapi``
+- Pandas
+- Numpy
+- Datetime
+- Requests
+- Requests.auth
+- Tqdm
+- Pprint
