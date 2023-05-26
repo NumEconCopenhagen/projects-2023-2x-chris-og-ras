@@ -4,8 +4,6 @@ from ipywidgets import interactive, fixed
 from types import SimpleNamespace
 import scipy.optimize as optimize
 
-
-
 class Romer:
     def __init__(self):
         par = self.par = SimpleNamespace()
